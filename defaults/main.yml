@@ -1,0 +1,33 @@
+---
+# General config
+docker_compose_services_network_name: "web"
+docker_compose_services_base_path: "/opt"
+docker_compose_services_timezone: "Europe/Berlin"
+
+# User/Group of the stack. Everything is mapped to this, instead of root.
+docker_compose_services_user: "homelab"
+docker_compose_services_uid: "900"
+docker_compose_services_group: "homelab"
+docker_compose_services_gid: "900"
+docker_compose_services_user_system: true
+
+docker_compose_services:
+# - name: nginx (required)
+#   state: present (required)
+#   directories: (optional)
+#     - "data"
+#     - "config"
+#   compose: (required)
+#     image: nginx:latest
+#     restart: always
+#     environment:
+#       PUID: "{{ docker_compose_services_uid }}"
+#       PGID: "{{ docker_compose_services_gid }}"
+#       TZ: "{{ docker_compose_services_timezone }}"
+#     volumes:
+#       - "{{ docker_compose_services_base_path }}/nginx/data:/usr/share/nginx/html"
+#       - "{{ docker_compose_services_base_path }}/nginx/config:/etc/nginx/conf"
+#     ports:
+#       - "9999:80"
+# - name: nginx2
+#   state: absent

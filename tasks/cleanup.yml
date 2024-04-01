@@ -1,0 +1,28 @@
+---
+- name: cleanup | set application facts
+  ansible.builtin.set_fact:
+    app_name: "{{ cleanup.name }}"
+    app_base_path: "{{ docker_compose_services_base_path }}"
+
+- name: "cleanup | check if service is running"
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/compose-{{ app_name }}.service"
+  register: cleanup_service
+
+- name: cleanup | stop and disable service
+  ansible.builtin.systemd:
+    name: "compose-{{ app_name }}"
+    enabled: false
+    state: stopped
+  notify: docker_compose_services_systemd_reload
+  when: cleanup_service.stat.exists
+
+- name: "cleanup | Ensure service file is removed"
+  ansible.builtin.file:
+    name: "/etc/systemd/system/compose-{{ app_name }}.service"
+    state: "absent"
+
+- name: "cleanup | Ensure app folders is removed"
+  ansible.builtin.file:
+    name: "{{ app_base_path }}/{{ app_name }}"
+    state: "absent"

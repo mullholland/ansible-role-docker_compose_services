@@ -1,0 +1,13 @@
+---
+- name: user | Ensure group exists
+  ansible.builtin.group:
+    name: "{{ docker_compose_services_group }}"
+    gid: "{{ docker_compose_services_gid }}"
+    state: present
+
+- name: user | Ensure user exists with gid
+  ansible.builtin.user:
+    name: "{{ docker_compose_services_user }}"
+    uid: "{{ docker_compose_services_uid }}"
+    system: "{{ docker_compose_services_user_system | default(omit) }}"
+    state: "present"

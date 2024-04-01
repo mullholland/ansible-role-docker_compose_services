@@ -1,0 +1,8 @@
+---
+#
+# Ansible managed
+#
+repository:
+  description: Create docker-compose.yml and systemd services for various apps which do not need config files
+  homepage: https://mullholland.net
+  topics: cloud, development, webserver, docker, ansible, molecule, tox, playbook

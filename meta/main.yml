@@ -1,0 +1,31 @@
+---
+galaxy_info:
+  author: mullholland
+  namespace: mullholland
+  role_name: docker_compose_services
+  description: Create docker-compose.yml and systemd services for various apps which do not need config files
+  license: MIT
+  company: mullholland
+  min_ansible_version: "2.10"
+
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+
+  galaxy_tags:
+    - cloud
+    - development
+    - webserver
+    - docker
+
+dependencies: []

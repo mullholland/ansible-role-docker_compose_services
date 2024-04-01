@@ -1,0 +1,26 @@
+---
+- name: create user
+  ansible.builtin.include_tasks:
+    file: user.yml
+
+- name: create docker network
+  ansible.builtin.include_tasks:
+    file: docker.yml
+
+- name: prepare docker-compose.yml files
+  ansible.builtin.include_tasks:
+    file: services.yml
+  with_items:
+    - "{{ docker_compose_services }}"
+  loop_control:
+    loop_var: dockerservice
+  when: dockerservice.state == "present"
+
+- name: cleanup docker-compose.yml files
+  ansible.builtin.include_tasks:
+    file: cleanup.yml
+  with_items:
+    - "{{ docker_compose_services }}"
+  loop_control:
+    loop_var: cleanup
+  when: cleanup.state == "absent"

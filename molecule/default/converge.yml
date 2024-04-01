@@ -1,0 +1,39 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    docker_compose_services:
+      - name: nginx
+        state: present
+        directories:
+          - "data"
+          - "config"
+        compose:
+          image: nginx:latest
+          restart: always
+          environment:
+            PUID: "{{ docker_compose_services_uid }}"
+            PGID: "{{ docker_compose_services_gid }}"
+            TZ: "{{ docker_compose_services_timezone }}"
+          volumes:
+            - "{{ docker_compose_services_base_path }}/nginx/data:/usr/share/nginx/html"
+            - "{{ docker_compose_services_base_path }}/nginx/config:/etc/nginx/conf"
+          ports:
+            - "9999:80"
+      - name: nginx2
+        state: present
+        compose:
+          image: nginx:latest
+          restart: always
+          environment:
+            PUID: "{{ docker_compose_services_uid }}"
+            PGID: "{{ docker_compose_services_gid }}"
+            TZ: "{{ docker_compose_services_timezone }}"
+          ports:
+            - "9998:80"
+      - name: nginx3
+        state: absent
+  roles:
+    - role: "ansible-role-docker_compose_services"

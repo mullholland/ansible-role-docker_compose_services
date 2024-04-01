@@ -1,0 +1,68 @@
+---
+- name: services | set application facts
+  ansible.builtin.set_fact:
+    app_name: "{{ dockerservice.name }}"
+    app_directories: "{{ dockerservice.directories | default('') }}"
+    app_base_path: "{{ docker_compose_services_base_path }}"
+    app_user: "{{ docker_compose_services_user }}"
+    app_uid: "{{ docker_compose_services_uid }}"
+    app_group: "{{ docker_compose_services_group }}"
+    app_gid: "{{ docker_compose_services_gid }}"
+    app_timezone: "{{ docker_compose_services_timezone }}"
+    app_compose: "{{ dockerservice.compose }}"
+
+- name: "services | Ensure app folder exists"
+  ansible.builtin.file:
+    name: "{{ app_base_path }}/{{ app_name }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0770"
+    state: directory
+
+- name: "services | Ensure app subfolders exists"
+  ansible.builtin.file:
+    name: '{{ app_base_path }}/{{ app_name }}/{{ item }}'
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0770"
+    state: directory
+  with_items:
+    - "{{ app_directories }}"
+  when: app_directories | length
+
+- name: services | get docker executable path
+  ansible.builtin.command:
+    cmd: "which docker"
+  changed_when: false
+  register: service_docker_executable_path
+
+- name: "services | create docker-compose.yml"
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ app_base_path }}/{{ app_name }}/docker-compose.yml"
+    mode: "0640"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+  register: service_compose
+
+- name: "services | Create systemd service file"
+  ansible.builtin.template:
+    src: "systemd.service.j2"
+    dest: "/etc/systemd/system/compose-{{ app_name }}.service"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+  register: service_systemd
+
+- name: services | systemd reload  # noqa: no-handler
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  when: service_systemd.changed
+
+- name: services | service start and enable  # noqa: no-handler
+  ansible.builtin.service:
+    name: "compose-{{ app_name }}"
+    state: restarted
+    enabled: true
+  when: service_systemd.changed or
+        service_compose.changed
