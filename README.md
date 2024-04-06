@@ -23,28 +23,32 @@ This example is taken from [`molecule/default/converge.yml`](https://github.com/
           - "data"
           - "config"
         compose:
-          image: nginx:latest
-          restart: always
-          environment:
-            PUID: "{{ docker_compose_services_uid }}"
-            PGID: "{{ docker_compose_services_gid }}"
-            TZ: "{{ docker_compose_services_timezone }}"
-          volumes:
-            - "{{ docker_compose_services_base_path }}/nginx/data:/usr/share/nginx/html"
-            - "{{ docker_compose_services_base_path }}/nginx/config:/etc/nginx/conf"
-          ports:
-            - "9999:80"
+          services:
+            nginx:
+              image: nginx:latest
+              restart: always
+              environment:
+                PUID: "{{ docker_compose_services_uid }}"
+                PGID: "{{ docker_compose_services_gid }}"
+                TZ: "{{ docker_compose_services_timezone }}"
+              volumes:
+                - "{{ docker_compose_services_base_path }}/nginx/data:/usr/share/nginx/html"
+                - "{{ docker_compose_services_base_path }}/nginx/config:/etc/nginx/conf"
+              ports:
+                - "9999:80"
       - name: nginx2
         state: present
         compose:
-          image: nginx:latest
-          restart: always
-          environment:
-            PUID: "{{ docker_compose_services_uid }}"
-            PGID: "{{ docker_compose_services_gid }}"
-            TZ: "{{ docker_compose_services_timezone }}"
-          ports:
-            - "9998:80"
+          services:
+            nginx:
+              image: nginx:latest
+              restart: always
+              environment:
+                PUID: "{{ docker_compose_services_uid }}"
+                PGID: "{{ docker_compose_services_gid }}"
+                TZ: "{{ docker_compose_services_timezone }}"
+              ports:
+                - "9998:80"
       - name: nginx3
         state: absent
   roles:
@@ -96,17 +100,19 @@ docker_compose_services:
 #     - "data"
 #     - "config"
 #   compose: (required)
-#     image: nginx:latest
-#     restart: always
-#     environment:
-#       PUID: "{{ docker_compose_services_uid }}"
-#       PGID: "{{ docker_compose_services_gid }}"
-#       TZ: "{{ docker_compose_services_timezone }}"
-#     volumes:
-#       - "{{ docker_compose_services_base_path }}/nginx/data:/usr/share/nginx/html"
-#       - "{{ docker_compose_services_base_path }}/nginx/config:/etc/nginx/conf"
-#     ports:
-#       - "9999:80"
+#     services:
+#       nginx:
+#         image: nginx:latest
+#         restart: always
+#         environment:
+#           PUID: "{{ docker_compose_services_uid }}"
+#           PGID: "{{ docker_compose_services_gid }}"
+#           TZ: "{{ docker_compose_services_timezone }}"
+#         volumes:
+#           - "{{ docker_compose_services_base_path }}/nginx/data:/usr/share/nginx/html"
+#           - "{{ docker_compose_services_base_path }}/nginx/config:/etc/nginx/conf"
+#         ports:
+#           - "9999:80"
 # - name: nginx2
 #   state: absent
 ```
