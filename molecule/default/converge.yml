@@ -1,7 +1,6 @@
 ---
 - name: Converge
   hosts: all
-  become: true
   gather_facts: true
   vars:
     docker_compose_services:
@@ -40,4 +39,4 @@
       - name: nginx3
         state: absent
   roles:
-    - role: "ansible-role-docker_compose_services"
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
