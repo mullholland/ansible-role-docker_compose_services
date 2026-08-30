@@ -1,15 +1,15 @@
 ---
-- name: cleanup | set application facts
+- name: cleanup | Set application facts
   ansible.builtin.set_fact:
     app_name: "{{ cleanup.name }}"
     app_base_path: "{{ docker_compose_services_base_path }}"
 
-- name: "cleanup | check if service is running"
+- name: "cleanup | Check if service is running"
   ansible.builtin.stat:
     path: "/etc/systemd/system/compose-{{ app_name }}.service"
   register: cleanup_service
 
-- name: cleanup | stop and disable service
+- name: cleanup | Stop and disable service
   ansible.builtin.systemd:
     name: "compose-{{ app_name }}"
     enabled: false
