@@ -28,7 +28,7 @@
     state: directory
   with_items:
     - "{{ app_directories }}"
-  when: app_directories | length
+  when: app_directories | length > 0
 
 - name: services | Get docker executable path
   ansible.builtin.command:
