@@ -129,6 +129,15 @@ docker_compose_services_group: "homelab"
 docker_compose_services_gid: "900"
 docker_compose_services_user_system: true
 
+# Logging configuration of the container(s). Limits the json-file log size by default.
+# Set to {} to fall back to the docker daemon defaults.
+# Applied to every service that does not define its own `logging`.
+docker_compose_services_logging:
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 docker_compose_services:
 # - name: nginx (required)
 #   state: present (required)
