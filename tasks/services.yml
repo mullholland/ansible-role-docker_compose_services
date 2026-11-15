@@ -1,5 +1,12 @@
 ---
 - name: services | Set application facts
+  vars:
+    docker_compose_services_unlogged: >-
+      {{ dockerservice.compose.services | default({}) | dict2items
+         | rejectattr('value.logging', 'defined') | map(attribute='key') | list }}
+    docker_compose_services_logging_defaults: >-
+      {{ dict(docker_compose_services_unlogged
+         | zip([{'logging': docker_compose_services_logging}] * docker_compose_services_unlogged | length)) }}
   ansible.builtin.set_fact:
     app_name: "{{ dockerservice.name }}"
     app_directories: "{{ dockerservice.directories | default('') }}"
@@ -9,7 +16,10 @@
     app_group: "{{ docker_compose_services_group }}"
     app_gid: "{{ docker_compose_services_gid }}"
     app_timezone: "{{ docker_compose_services_timezone }}"
-    app_compose: "{{ dockerservice.compose }}"
+    app_compose: >-
+      {{ dockerservice.compose | combine({'services': docker_compose_services_logging_defaults}, recursive=True)
+         if docker_compose_services_logging and dockerservice.compose.services is defined
+         else dockerservice.compose }}
 
 - name: "services | Ensure app folder exists"
   ansible.builtin.file:
